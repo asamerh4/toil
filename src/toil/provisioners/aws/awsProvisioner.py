@@ -533,9 +533,15 @@ class AWSProvisioner(AbstractProvisioner):
 
     @classmethod
     def __getNodesInCluster(cls, ctx, clusterName, preemptable=False, both=False):
-        pendingInstances = ctx.ec2.get_only_instances(filters={'instance.group-name': clusterName,
+        def limitExceeded(e):
+            return e.status == 503 and 'Request limit exceeded' in e.body
+        for attempt in retry(predicate=limitExceeded, timeout=300):
+            with attempt:
+                pendingInstances = ctx.ec2.get_only_instances(filters={'instance.group-name': clusterName,
                                                                'instance-state-name': 'pending'})
-        runningInstances = ctx.ec2.get_only_instances(filters={'instance.group-name': clusterName,
+        for attempt in retry(predicate=limitExceeded, timeout=300):
+            with attempt:
+                runningInstances = ctx.ec2.get_only_instances(filters={'instance.group-name': clusterName,
                                                                'instance-state-name': 'running'})
         instances = set(pendingInstances)
         if not preemptable and not both:
