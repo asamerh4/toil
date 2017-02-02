@@ -28,7 +28,7 @@ dependencies = ' '.join(['libffi-dev',  # For client side encryption for 'azure'
                          'wget',
                          'curl',
                          'openssh-server',
-                         'mesos=1.0.0-2.0.89.ubuntu1404',
+                         'mesos=1.1.0-2.0.107.ubuntu1404',
                          'rsync',
                          'screen'])
 
