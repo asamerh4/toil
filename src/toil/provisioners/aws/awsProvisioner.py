@@ -281,7 +281,7 @@ class AWSProvisioner(AbstractProvisioner):
         while True:
             output = cls._sshInstance(ip_address, '/usr/bin/ps', 'aux')
             time.sleep(5)
-            if 'docker daemon' in output:
+            if 'dockerd' in output:
                 # docker daemon has started
                 break
             else:
@@ -514,7 +514,7 @@ class AWSProvisioner(AbstractProvisioner):
                                                            num_instances=numNodes,
                                                            tentative=True)
                                      )
-            # flatten the list 
+            # flatten the list
             instancesLaunched = [item for sublist in instancesLaunched for item in sublist]
         wait_instances_running(self.ctx.ec2, instancesLaunched)
         AWSProvisioner._addTags(instancesLaunched, self.tags)
